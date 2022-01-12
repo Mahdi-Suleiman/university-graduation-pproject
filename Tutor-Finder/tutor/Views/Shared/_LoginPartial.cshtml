@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNet.Identity
+@using tutor.Models
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("logOff", "Account", FormMethod.Post, new { id = "logoff" }))
+    {
+        @Html.AntiForgeryToken()
+        var db = new ApplicationDbContext();
+        var userId = User.Identity.GetUserId();
+        var CurrentUser = db.Users.Where(a => a.Id == userId).FirstOrDefault();
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Welcome @CurrentUser.FirstName @CurrentUser.LastName
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="~/Account/EditProfile" class="dropdown-item">Edit Account</a></li>
+                @if (CurrentUser.UserType == "Tutor")
+                {
+                    <li><a class="dropdown-item" href="~/EditPricings">Edit Pricings</a></li>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <li><a class="dropdown-item" href="~/Courses">Manage Courses</a></li>
+                    <li><a class="dropdown-item" href="~/StudyPlaces">Manage Study Places</a></li>
+                    <li><a class="dropdown-item" href="~/TutorCourses">Manage Tutor Courses</a></li>
+                }
+                @if (CurrentUser.UserType == "Tutor" || CurrentUser.UserType == "Student")
+                {
+                    <li><a class="dropdown-item" href="~/Lectures">My Lectures</a></li>
+                }
+                
+
+
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="javascript: document.getElementById('logoff').submit()">Logout</a></li>
+            </ul>
+        </div>
+        
+    }
+}
+else
+{
+    <ul class="navbar-nav ms-auto mb-2 mb-md-0">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/Account/Register">Sign up</a>
+        </li>
+    </ul>
+
+    <ul class="navbar-nav ms-auto mb-2 mb-md-0" style="margin-left:0px !important;">
+        <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/Account/Login">Login</a>
+        </li>
+    </ul>
+}

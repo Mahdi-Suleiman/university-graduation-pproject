@@ -1,0 +1,46 @@
+﻿/*for all Navbar*/
+.navbar-default {
+    background-color: #5f1717;
+    border-color: #6f6865;
+}
+/*color of font*/
+.navbar-default .navbar-nav > li > a {
+        color: white;
+    }
+/*color of shadow*/
+.navbar-default .navbar-nav > li > a:hover {
+        color: #be8787;
+    }
+/*pading right for all icon*/
+    .navbar-default .navbar-nav > li > a {
+        color: white;
+        padding-right: 70px;
+    }
+
+.myfooter {
+    background-color: #5f1717;
+    margin-top :50000px;
+    color:white;
+}
+/*font for link of facebook and instagram*/
+.myfooter ul {
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+}
+body {
+    padding-top:60px;
+    padding-left:30px;
+    
+}
+a{
+    text-decoration:none;
+    color:inherit;
+}
+ .img-size{
+     font-size:90px;
+ }
+ .navbar-user{
+     padding:10px;
+     padding-bottom:0px;
+     width:350px;
+ }

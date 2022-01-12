@@ -1,0 +1,46 @@
+﻿@using tutor.Models
+@{
+    ViewBag.Title = "Tutors";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var db = new ApplicationDbContext();
+    string courses;
+}
+
+<div class="container" style="margin-top:30px;">
+    <div class="row align-content-around align-content-between border">
+        <div class="bg-dark" style="margin-bottom:20px;">
+            <h1 style="margin:10px;color:white">Tutors</h1>
+        </div>
+        @foreach (var user in db.Users.Where(a => (a.UserType == "Tutor")))
+        {
+            if (db.TutorCourses.Where(tc => tc.TutorId == user.Id).ToList().Count > 0)
+            {
+                courses = "";
+                <div class="card " style="width: 18rem; margin-left:30px; padding:0px !important;margin-bottom:10px;">
+                    <img src="~/Uploads/@user.Image" class="card-img-top" style="height:262px;max-width:286px;">
+                    <div class="card-body d-flex flex-column">
+                        <h3 class="card-title">@user.FirstName @user.LastName</h3>
+                        <h6>
+                            Courses:
+                        </h6>
+                        @foreach (var item in db.TutorCourses.Where(c => c.TutorId == user.Id))
+                        {
+                            if (courses != "")
+                            {
+                                courses = courses + ", " + item.Course.Name;
+                            }
+                            else { courses = courses + item.Course.Name; }
+                        }
+
+                        <p>@courses</p>
+                        @Html.ActionLink("View Profile", "ViewProfile", "Account", new { userId = user.Id }, new { @class = "btn btn-secondary mt-auto" })
+                    </div>
+                </div>
+            }
+
+        }
+
+    </div><!-- /.row -->
+
+
+</div>

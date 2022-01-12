@@ -1,0 +1,77 @@
+﻿@model tutor.Models.Lecture
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container" style="margin-top:30px">
+    <div class="row">
+        <h3>Are you sure you want to Accept this Lecture?</h3>
+        <div>
+            <h4>Lecture</h4>
+            <hr />
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Course.Name)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Course.Name)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.StudyPlace.Name)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.StudyPlace.Name)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.StudentId)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Student.FirstName) @Html.DisplayFor(model => model.Student.LastName)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.StartTime)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.StartTime)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Duration)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Duration)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Price)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Price)$
+                </dd>
+
+            </dl>
+
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-actions no-color">
+                    <input type="submit" value="Accept" class="btn btn-success" /> |
+                    @Html.ActionLink("Back to List", "Index")
+                </div>
+            }
+        </div>
+
+
+    </div>
+</div>

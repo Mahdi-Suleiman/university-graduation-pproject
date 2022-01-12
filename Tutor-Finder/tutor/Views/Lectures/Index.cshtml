@@ -1,0 +1,332 @@
+﻿@model IEnumerable<tutor.Models.Lecture>
+@using tutor.Models
+@using Microsoft.AspNet.Identity;
+@{
+    ApplicationDbContext db = new ApplicationDbContext();
+    var userId = User.Identity.GetUserId();
+    var CurrentUser = db.Users.Where(u => u.Id == userId).SingleOrDefault();
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container" style="margin-top:30px;">
+    <div class="row">
+        <h2>Lectures</h2>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Lecture Requests</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Coming Lectures</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Previous Lectures</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent" style="padding:0px;">
+            <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <table class="table table-hover table-bordered table-striped">
+                    <tr>
+                        <th>
+                            Course
+                        </th>
+                        <th>
+                            Study Place
+                        </th>
+                        @if (CurrentUser.UserType == "Student")
+                        {
+                            <th>
+                                Tutor
+                            </th>
+                        }
+                        @if (CurrentUser.UserType == "Tutor")
+                        {
+                            <th>
+                                Student
+                            </th>
+                        }
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.StartTime)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Duration)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Price)
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model.Where((l => (l.TutorId == userId || l.StudentId == userId) && l.Confirmed == false)))
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Course.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StudyPlace.Name)
+                            </td>
+                            @if (CurrentUser.UserType == "Student")
+                            {
+                                <td>
+                                    <p>@item.Tutor.FirstName @item.Tutor.LastName</p>
+                                </td>
+                            }
+                            @if (CurrentUser.UserType == "Tutor")
+                            {
+                                <td>
+                                    <p>@item.Student.FirstName @item.Student.LastName</p>
+                                </td>
+                            }
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Duration) Hour(s)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Price)$
+                            </td>
+                            <td>
+                                @if (item.Confirmed == false)
+                                {
+                                    <p style="color:orange;">Pending...</p>
+                                }
+                                @if (item.Confirmed == true)
+                                {
+                                    <p style="color:green;">Accepted</p>
+                                }
+                            </td>
+                            <td>
+                                @if (CurrentUser.UserType == "Tutor")
+                                {
+                                    if (item.Confirmed == false)
+                                    {
+                                        @Html.ActionLink("Accept", "Accept", new { id = item.Id }, new { @class = "btn btn-success", @style = "margin:5px;" })
+                                        @Html.ActionLink("Decline", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+                                    }
+                                    else
+                                    {
+                                        if (DateTime.Now < item.StartTime)
+                                        {
+                                            @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+                                        }
+
+                                    }
+
+                                }
+                                @if (CurrentUser.UserType == "Student")
+                                {
+                                    if (item.Confirmed == false)
+                                    {
+                                        @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger", @style = "margin:5px;" })
+                                    }
+
+                                }
+
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <table class="table table-hover table-bordered table-striped">
+                    <tr>
+                        <th>
+                            Course
+                        </th>
+                        <th>
+                            Study Place
+                        </th>
+                        @if (CurrentUser.UserType == "Student")
+                        {
+                            <th>
+                                Tutor
+                            </th>
+                        }
+                        @if (CurrentUser.UserType == "Tutor")
+                        {
+                            <th>
+                                Student
+                            </th>
+                        }
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.StartTime)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Duration)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Price)
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in Model.Where(l => (l.TutorId == userId || l.StudentId == userId) && l.StartTime>DateTime.Now && l.Confirmed == true))
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Course.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StudyPlace.Name)
+                            </td>
+                            @if (CurrentUser.UserType == "Student")
+                            {
+                                <td>
+                                    <p>@item.Tutor.FirstName @item.Tutor.LastName</p>
+                                </td>
+                            }
+                            @if (CurrentUser.UserType == "Tutor")
+                            {
+                                <td>
+                                    <p>@item.Student.FirstName @item.Student.LastName</p>
+                                </td>
+                            }
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Duration) Hour(s)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Price)$
+                            </td>
+                            <td>
+                                @if (item.Confirmed == false)
+                                {
+                                    <p style="color:orange;">Pending...</p>
+                                }
+                                @if (item.Confirmed == true)
+                                {
+                                    <p style="color:green;">Accepted</p>
+                                }
+                            </td>
+                            <td>
+                                @if (CurrentUser.UserType == "Tutor")
+                                {
+                                    if (item.Confirmed == false)
+                                    {
+                                        @Html.ActionLink("Accept", "Accept", new { id = item.Id }, new { @class = "btn btn-success", @style = "margin:5px;" })
+                                        @Html.ActionLink("Decline", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+                                    }
+                                    else
+                                    {
+                                        if (DateTime.Now < item.StartTime)
+                                        {
+                                            @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+                                        }
+
+                                    }
+
+                                }
+                                @if (CurrentUser.UserType == "Student")
+                                {
+                                    if (item.Confirmed == false)
+                                    {
+                                        @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger", @style = "margin:5px;" })
+                                    }
+
+                                }
+
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+            <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                <table class="table table-hover table-bordered table-striped">
+                    <tr>
+                        <th>
+                            Course
+                        </th>
+                        <th>
+                            Study Place
+                        </th>
+                        @if (CurrentUser.UserType == "Student")
+                        {
+                            <th>
+                                Tutor
+                            </th>
+                        }
+                        @if (CurrentUser.UserType == "Tutor")
+                        {
+                            <th>
+                                Student
+                            </th>
+                        }
+
+                        <th>
+                            @Html.DisplayNameFor(model => model.StartTime)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Duration)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Price)
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                    </tr>
+
+                    @foreach (var item in Model.Where(l => (l.TutorId == userId || l.StudentId == userId) && l.StartTime<DateTime.Now))
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Course.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StudyPlace.Name)
+                            </td>
+                            @if (CurrentUser.UserType == "Student")
+                            {
+                                <td>
+                                    <p>@item.Tutor.FirstName @item.Tutor.LastName</p>
+                                </td>
+                            }
+                            @if (CurrentUser.UserType == "Tutor")
+                            {
+                                <td>
+                                    <p>@item.Student.FirstName @item.Student.LastName</p>
+                                </td>
+                            }
+                            <td>
+                                @Html.DisplayFor(modelItem => item.StartTime)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Duration) Hour(s)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Price)$
+                            </td>
+                            <td>
+                                @if (item.Confirmed == false)
+                                {
+                                    <p style="color:orange;">Pending...</p>
+                                }
+                                @if (item.Confirmed == true)
+                                {
+                                    <p style="color:green;">Accepted</p>
+                                }
+                            </td>
+                        </tr>
+                    }
+
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+</div>
